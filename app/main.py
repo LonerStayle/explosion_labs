@@ -2,7 +2,7 @@ from fastapi import FastAPI, WebSocket
 from app.dto.CombinationReq import CombinationReq
 from app.dto.BaseRes import BaseRes
 import json
-from app.service.combination_service import CombinationService
+from app.service.ai_service import AiService
 
 
 app = FastAPI(
@@ -19,13 +19,13 @@ def health_check():
 @app.websocket("/ws/combination")
 async def combination(ws: WebSocket):
     await ws.accept()
-    service = CombinationService()
+    service = AiService()
     try:
         while True:
             raw = await ws.receive_text()   
             obj = json.loads(raw)           
             req = CombinationReq(**obj)      
-            async for token in service.process_message(req):
+            async for token in service.combination_message(req):
                 await ws.send_text(token)
 
             await ws.close(code=1000, reason="done")
