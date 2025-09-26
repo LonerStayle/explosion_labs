@@ -1,45 +1,90 @@
-import os
-from app.dto import CombinationReq
+import os, pickle, faiss
+
+from app.dto.HelpChatReq import HelpChatReq
 from langchain_openai import ChatOpenAI
-from langchain.schema import HumanMessage, SystemMessage
-from app.service.prompts import COMBINATION_MESSAGE_SYSTEM, HELP_MESSAGE_SYSTEM, combination_prompt
+from langchain_openai import OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain.docstore.in_memory import InMemoryDocstore
+from langchain.schema import Document
+from langchain.output_parsers import OutputFixingParser
+from app.service.parser import combination_parser
+from app.dto.CombinationReq import CombinationReq
+from app.dto.CombinationRes import CombinationRes
+from app.service.prompts import (
+    combination_prompt,
+    help_chat_prompt,
+)
 from dotenv import load_dotenv
+
 load_dotenv()
 key = os.getenv("OPENAI_API_KEY")
+
+
 class AiService:
     def __init__(self):
-        self.mini_llm = ChatOpenAI(
-            openai_api_key=key,
-            model="gpt-4o-mini",
-            streaming=True
+        with open("documents.pkl", "rb") as f:
+            raw_docs = pickle.load(f)
+
+        documents = []
+        for d in raw_docs:
+            if isinstance(d, dict):
+                documents.append(
+                    Document(page_content=d.get("description", ""), metadata=d)
+                )
+            else:
+                documents.append(d)
+
+        docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(documents)})
+        faiss_index = faiss.read_index("my_faiss.index")
+        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+
+        self.vectordb = FAISS(
+            embedding_function=self.embeddings,
+            index=faiss_index,
+            docstore=docstore,
+            index_to_docstore_id={i: str(i) for i in range(len(documents))},
         )
+        self.retriver = self.vectordb.as_retriever(search_kwargs={"k": 2})
 
         self.nano_llm = ChatOpenAI(
-            openai_api_key=key,
-            model="gpt-4.1-nano",
-            streaming=True
+            openai_api_key=key, model="gpt-4.1-nano", streaming=True
         )
 
-    async def combination_message(self,  req: CombinationReq):
-        messages = [
-            SystemMessage(content=COMBINATION_MESSAGE_SYSTEM),
-            HumanMessage(content="test")
-        ]
+        self.mini_llm = ChatOpenAI(
+            openai_api_key=key, model="gpt-4o-mini", streaming=True
+        )
+        
+        self.fixing_combi_parser = OutputFixingParser.from_llm(
+            llm=self.nano_llm,
+            parser=combination_parser,
+        )
 
-        combination_prompt
+    async def combination_message(self, req: CombinationReq):
 
-        async for chunk in self.mini_llm.astream(messages):
-            if chunk.content:
-                yield chunk.content
+        chain = combination_prompt | self.nano_llm | self.fixing_combi_parser
+        resp: CombinationRes = await chain.ainvoke(
+            {
+                "material_a": req.material_a.value,
+                "material_b": req.material_b.value,
+                "scenario": req.scenario.value,
+                "format_instructions": self.fixing_combi_parser.get_format_instructions(),
+            }
+        )
+        return resp
 
+    async def help_message(self, req: HelpChatReq):
+        docs = self.retriver.get_relevant_documents(req.question)
+        context = "\n".join([d.page_content for d in docs])
+        print(context)
+        
+        chain = help_chat_prompt | self.nano_llm
+        resp = await chain.ainvoke(
+            {
+                "material": req.select_material,
+                "question": req.question,
+                "context": context,
+                "scenario": req.scenario,
+            }
+        )
 
-    async def help_message(self, question):
-        messages = [
-            SystemMessage(content=HELP_MESSAGE_SYSTEM),
-            HumanMessage(content=question)
-        ]
-        async for chunk in self.nano_llm.astream(messages):
-            if chunk.content:
-                yield chunk.content
-
-    
+        return resp.content

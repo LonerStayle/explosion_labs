@@ -10,5 +10,9 @@ class ElementSymbols(str, Enum):
     HCN = "HCN" # 사이안화 수소 
     KOH = "KOH" # 수산화 칼륨 
     I2 = "I2" # 아이오딘
-    NH3H2O = "NH₃·H₂O" # 진한 암모니아수
-
+    NH3H2O = "NH3H2O" # 진한 암모니아수
+    HNO33HCL = "HNO33HCL"
+    NI3NH3 = "NI3NH3"
+    HI = "HI"
+    KCL = "KCL"    
+    H2 = "H2"

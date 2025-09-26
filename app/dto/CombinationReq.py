@@ -1,16 +1,17 @@
 from app.common.ElementSymbols import ElementSymbols
+from app.common.GameScenario import GameScenario
 from pydantic import BaseModel
-from typing import List
 
 class CombinationReq(BaseModel):
-    symbols: List[ElementSymbols]
+    material_a: ElementSymbols
+    material_b: ElementSymbols
+    scenario: GameScenario
     
     class Config:
         json_schema_extra = {
             "example": {
-                "symbols": [
-                    "K",
-                    "H2O",
-                ]
+                "material_a": "K",
+                "material_b": "H2O",
+                "scenario" : "Combine_HNO3HCL"
             }
         }

@@ -4,6 +4,8 @@ import faiss
 from openai import OpenAI
 from dotenv import load_dotenv
 import pickle
+import json
+from typing import List, Any
 
 # --- 1. 환경 설정 및 API 키 로드 ---
 
@@ -19,32 +21,35 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # --- 2. 임베딩 생성 함수 ---
 
-def create_embeddings(texts, model="text-embedding-3-small"):
+def create_embeddings(docs, model="text-embedding-3-small"):
     """
-    주어진 텍스트 목록을 OpenAI 임베딩 모델을 사용해 벡터로 변환합니다.
-
-    Args:
-        texts (list): 벡터로 변환할 문자열이 담긴 리스트입니다.
-                       예: ["첫 번째 문서", "두 번째 문서"]
-        model (str): 사용할 OpenAI 임베딩 모델의 이름입니다.
-                     "text-embedding-3-small"은 비용과 성능 면에서 효율적입니다.
-
-    Returns:
-        np.ndarray: 각 텍스트에 대한 임베딩 벡터가 담긴 NumPy 배열입니다.
-                    배열의 각 행이 하나의 텍스트에 대한 벡터에 해당합니다.
+    docs: list of dict (RAG 문서)
     """
-    # OpenAI 임베딩 API를 호출합니다.
+    # 문자열 리스트로 변환
+    texts = []
+    for d in docs:
+        parts = []
+        if d.get("reactant1"):
+            parts.append(d["reactant1"])
+        if d.get("reactant2"):
+            parts.append(d["reactant2"])
+        if d.get("reactant3_catalyst"):
+            parts.append(d["reactant3_catalyst"])
+        if d.get("products"):
+            parts.append(d["products"])
+        if d.get("description"):
+            parts.append(d["description"])
+        if d.get("usage"):
+            parts.append(d["usage"])
+        texts.append(" | ".join(parts))  # 하나의 문자열로 합침
+
+    # OpenAI 임베딩 생성
     response = client.embeddings.create(
-        input=texts,
-        model=model
+        model=model,
+        input=texts
     )
-    # API 응답에서 임베딩 데이터만 추출하여 리스트로 만듭니다.
     embeddings = [item.embedding for item in response.data]
-
-    # 리스트를 NumPy 배열로 변환하여 반환합니다.
-    # NumPy 배열은 벡터 연산에 효율적입니다.
-    return np.array(embeddings).astype('float32')
-
+    return np.array(embeddings, dtype="float32")  # ✅ numpy 배열로 변환
 
 # --- 3. 벡터 DB (FAISS 인덱스) 생성 및 저장 함수 ---
 
@@ -90,16 +95,57 @@ def save_documents(documents, path="documents.pkl"):
 
 # --- 4. 메인 실행 부분 ---
 
+
+def load_json_or_jsonl(path: str) -> List[Any]:
+    """
+    - JSON array (starts with '[') 이면 전체를 json.load로 읽어 리스트 반환
+    - 아니면 각 라인을 json.loads로 파싱(빈줄 무시)하여 리스트 반환
+    """
+    with open(path, "r", encoding="utf-8") as f:
+        # 파일의 앞부분에서 첫 의미 있는 문자 하나 읽어 확인
+        # (파일이 크지 않다면 전체를 읽어도 되지만, 여기선 앞부분만 본다)
+        first_chunk = f.read(2048)
+        if not first_chunk:
+            return []
+        stripped = first_chunk.lstrip()
+        if stripped.startswith('['):
+            # 파일 전체를 처음부터 읽어 json array 로 처리
+            f.seek(0)
+            try:
+                data = json.load(f)
+                if isinstance(data, list):
+                    return data
+                else:
+                    # array 가 아닌 경우 안전 장치
+                    return [data]
+            except json.JSONDecodeError as e:
+                raise RuntimeError(f"JSON 배열 파싱 실패: {e}")
+        else:
+            # JSONL 방식: 첫 부분이 '['가 아니면 라인 단위로 파싱 시도
+            f.seek(0)
+            docs = []
+            bad_lines = []
+            for i, line in enumerate(f, start=1):
+                if not line.strip():
+                    continue
+                try:
+                    docs.append(json.loads(line))
+                except json.JSONDecodeError:
+                    # 문제 있는 라인은 무시하고 기록
+                    bad_lines.append((i, line[:200]))
+            if bad_lines:
+                print("⚠️ 다음 라인들에서 JSON 파싱 실패(무시됨):")
+                for ln, snippet in bad_lines:
+                    print(f"  line {ln}: {snippet!r}")
+            return docs
+        
+import json
 if __name__ == "__main__":
     # RAG 시스템에 넣을 원본 데이터 (간단한 예시)
     # 실제로는 파일에서 읽어오거나, 긴 문서를 여러 조각으로 나눈 데이터가 될 수 있습니다.
-    my_documents = [
-        "RAG는 검색 증강 생성을 의미합니다.",
-        "벡터 데이터베이스는 임베딩 벡터를 저장하는 데 사용됩니다.",
-        "OpenAI는 강력한 언어 모델을 제공합니다.",
-        "FAISS는 벡터 유사도 검색을 위한 라이브러리입니다.",
-        "임베딩은 텍스트를 숫자 벡터로 표현하는 것입니다."
-    ]
+    
+    my_documents = load_json_or_jsonl(r"C:\PythonProject\explosion_labs\app\data\help_chat_doc.jsonl")
+
 
     print("1. OpenAI API를 사용하여 임베딩을 생성합니다...")
     # 문서들을 벡터로 변환합니다.

@@ -1,9 +1,16 @@
-from fastapi import FastAPI, WebSocket
+from fastapi import FastAPI
 from app.dto.CombinationReq import CombinationReq
-from app.dto.BaseRes import BaseRes
-import json
+from app.dto.HelpChatReq import HelpChatReq
 from app.service.ai_service import AiService
-
+from app.common.GameScenario import GameScenario
+from app.dto.BaseRes import BaseRes
+from app.dto.CombinationReq import CombinationReq
+from app.dto.CombinationRes import CombinationRes
+from app.common.ElementSymbols import ElementSymbols
+from app.common.CombinationResultStateDetail import CombinationResultStateDetail
+from app.common.CombinationResultState import CombinationResultState
+from app.common.PlayerState import PlayerState
+from app.common.GameScenario import GameScenario
 
 app = FastAPI(
     title="미니프로젝트",
@@ -11,42 +18,32 @@ app = FastAPI(
     version="1.0.0"
 )
 
+service = AiService()
+
 @app.get("/health", tags=["헬스 체크"])
 def health_check():
     return {"gggg":"ogggk"}
 
+@app.post("/combination", response_model=BaseRes[CombinationRes])
+async def combination_api(req: CombinationReq):
+    # result = await service.combination_message(req)
+    fake_res = CombinationRes(
+        material_a="Zn",
+        material_b="HCl",
+        result_1=ElementSymbols.H2,
+        result_2="H2",
+        result_state=CombinationResultState.SUCCESS,  # 예시 enum 값
+        result_state_detail=CombinationResultStateDetail.NOTHING,  # 예시 enum 값
+        gold_melt=False,
+        player_state=PlayerState.NO_DAMAGE,              # 예시 enum 값
+        scenario=GameScenario.COMBINE_HNO3HCL,        # 예시 enum 값
+        scenario_answer=ElementSymbols.H2
+    )
+    return BaseRes(data=fake_res)
+    # return {"answer": result}
 
-@app.websocket("/ws/combination")
-async def combination(ws: WebSocket):
-    await ws.accept()
-    service = AiService()
-    try:
-        while True:
-            raw = await ws.receive_text()   
-            obj = json.loads(raw)           
-            req = CombinationReq(**obj)      
-            async for token in service.combination_message(req):
-                await ws.send_text(token)
 
-            await ws.close(code=1000, reason="done")
-    except Exception as e: 
-        print("WS Error", e)
-    finally:
-        await ws.close(code=1000, reason="server shutdown")  
-
-
-@app.websocket("/ws/help_chat")
-async def chat(ws:WebSocket):
-    await ws.accept()
-    service = AiService()    
-    try:
-        while True:
-            text = await ws.receive_text()
-            async for token in service.help_message(text):
-                await ws.send_text(token)
-
-    except Exception as e: 
-        print("WS Error", e)
-    finally:
-        await ws.close(code=1000, reason="server shutdown")
-    
+@app.post("/help_chat")
+async def help_chat_api(req: HelpChatReq):
+    result = await service.help_message(req)
+    return {"ai_message": result}
