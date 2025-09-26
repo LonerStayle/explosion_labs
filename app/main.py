@@ -35,3 +35,18 @@ async def combination(ws: WebSocket):
         await ws.close(code=1000, reason="server shutdown")  
 
 
+@app.websocket("/ws/help_chat")
+async def chat(ws:WebSocket):
+    await ws.accept()
+    service = AiService()    
+    try:
+        while True:
+            text = await ws.receive_text()
+            async for token in service.help_message(text):
+                await ws.send_text(token)
+
+    except Exception as e: 
+        print("WS Error", e)
+    finally:
+        await ws.close(code=1000, reason="server shutdown")
+    

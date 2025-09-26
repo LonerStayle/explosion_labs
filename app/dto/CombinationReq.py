@@ -1,6 +1,5 @@
 from app.common.ElementSymbols import ElementSymbols
 from pydantic import BaseModel
-from enum import Enum
 from typing import List
 
 class CombinationReq(BaseModel):
@@ -10,9 +9,8 @@ class CombinationReq(BaseModel):
         json_schema_extra = {
             "example": {
                 "symbols": [
-                    "Hydrogen",
-                    "Helium",
-                    "Lithium"
+                    "K",
+                    "H2O",
                 ]
             }
         }
