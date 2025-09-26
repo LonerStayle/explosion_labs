@@ -10,7 +10,7 @@ from typing import Optional
 class CombinationRes(BaseModel):
     material_a: str
     material_b: str
-    result_1: ElementSymbols
+    result_1: Optional[ElementSymbols] = None
     result_2: Optional[str] = None
     result_state: CombinationResultState
     result_state_detail: CombinationResultStateDetail
@@ -18,3 +18,4 @@ class CombinationRes(BaseModel):
     player_state: PlayerState
     scenario: GameScenario
     scenario_answer: ElementSymbols
+    comment:str

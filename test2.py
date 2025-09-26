@@ -15,19 +15,16 @@ async def main():
             scenario=GameScenario.COMBINE_HNO3HCL,
         )
     )
-    # 이제 result는 CombinationRes 객체
-    # print(result)
-    # print(result.dict())   # dict 변환
     print(result01.json())  # JSON 변환
 
-    result02 = await service.help_message(
-        HelpChatReq(
-            select_material=ElementSymbols.HNO3,
-            question="그다음 뭐해야돼??",
-            scenario=GameScenario.COMBINE_HNO3HCL,
-        )
-    )
-    print(result02)
+    # result02 = await service.help_message(
+    #     HelpChatReq(
+    #         select_material=ElementSymbols.HNO3,
+    #         question="그다음 뭐해야돼??",
+    #         scenario=GameScenario.COMBINE_HNO3HCL,
+    #     )
+    # )
+    # print(result02)
 
 
 asyncio.run(main())

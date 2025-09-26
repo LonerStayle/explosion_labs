@@ -22,29 +22,33 @@ key = os.getenv("OPENAI_API_KEY")
 
 class AiService:
     def __init__(self):
-        with open("documents.pkl", "rb") as f:
+        faiss_index = faiss.read_index("my_faiss.index")
+        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+# -------------------------
+        with open("help_chat_docments.pkl", "rb") as f:
             raw_docs = pickle.load(f)
 
-        documents = []
+        help_chat_documents = []
         for d in raw_docs:
             if isinstance(d, dict):
-                documents.append(
+                help_chat_documents.append(
                     Document(page_content=d.get("description", ""), metadata=d)
                 )
             else:
-                documents.append(d)
+                help_chat_documents.append(d)
 
-        docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(documents)})
-        faiss_index = faiss.read_index("my_faiss.index")
-        self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
-
-        self.vectordb = FAISS(
+        docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
+        self.help_vectordb = FAISS(
             embedding_function=self.embeddings,
             index=faiss_index,
             docstore=docstore,
-            index_to_docstore_id={i: str(i) for i in range(len(documents))},
+            index_to_docstore_id={i: str(i) for i in range(len(help_chat_documents))},
         )
-        self.retriver = self.vectordb.as_retriever(search_kwargs={"k": 2})
+        self.help_retriver = self.help_vectordb.as_retriever(search_kwargs={"k": 2})
+# -------------------------
+# 화인님이 하실 부분 위 헬프챗 도큐먼트 코드 참고 
+# -------------------------
+
 
         self.nano_llm = ChatOpenAI(
             openai_api_key=key, model="gpt-4.1-nano", streaming=True
@@ -60,7 +64,7 @@ class AiService:
         )
 
     async def combination_message(self, req: CombinationReq):
-
+        # ----- 여기다가 RAG 전략 세팅 ------ 
         chain = combination_prompt | self.nano_llm | self.fixing_combi_parser
         resp: CombinationRes = await chain.ainvoke(
             {
@@ -73,7 +77,7 @@ class AiService:
         return resp
 
     async def help_message(self, req: HelpChatReq):
-        docs = self.retriver.get_relevant_documents(req.question)
+        docs = self.help_retriver.get_relevant_documents(req.question)
         context = "\n".join([d.page_content for d in docs])
         print(context)
         

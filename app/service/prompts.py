@@ -6,6 +6,7 @@ COMBINATION_MESSAGE_SYSTEM = """
      추가 설명, 자연어 문장, 불필요한 텍스트는 절대 넣지 마라.
     """
 COMBINATION_MESSAGE_USER = """아래 입력값을 참고해 CombinationRes JSON 객체를 생성하라.
+
 [입력값]
 - material_a: {material_a}
 - material_b: {material_b}
