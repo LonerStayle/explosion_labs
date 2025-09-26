@@ -1,0 +1,394 @@
+[
+    {
+      "reactant1": "칼륨(2K)",
+      "reactant2": "물(2H₂O)",
+      "reactant3_catalyst": null,
+      "products": "수산화칼륨(KOH)용액 + 수소(H₂)기체",
+      "description": "칼륨(K)의 반응성이 매우 커서, 물에 닿는 즉시 발생하는 열이 수소 기체(H₂)를 점화시켜 격렬하게 폭발함. 칼륨이(K)이 수산화칼륨(KOH)용액 + 수소(H₂)기체 로 변하면서 엄청난 발열이 발생하고 생성되는 수소(H₂)기체가 이 열에 반응하여 불꽃을 내며 폭발함.",
+      "usage": "알칼리금속(칼륨) 반응 관찰"
+    },
+    {
+      "reactant1": "사이안화 수소(HCN)",
+      "reactant2": "수산화 칼륨(KOH)",
+      "reactant3_catalyst": null,
+      "products": "사이안화칼륨(KCN) + 물(H₂O)",
+      "description": "반응물인 사이안화 수소(HCN)는 극도의 맹독성 기체이며, 수산화 칼륨(KOH)은 강한 부식성을 가짐. 결과물인 사이안화칼륨(KCN) 또한 맹독성 고체임.",
+      "usage": "청산가리 제조 - 왕수에 비해 반응 속도는 느리지만, 매우 낮은 농도의 금도 효율적으로 추출"
+    },
+    {
+      "reactant1": "아이오딘(I₂)",
+      "reactant2": "진한 암모니아수(NH₃·H₂O)",
+      "reactant3_catalyst": null,
+      "products": "질소 삼아이오딘-암모니아 착물(NI₃·NH₃) + 아이오딘화 수소(HI)",
+      "description": "결과물인 질소 삼아이오딘(NI₃·NH₃)은 건조 시 매우 불안정한 접촉 폭발물로, 약한 충격에도 폭발함.",
+      "usage": "화학의 불안정성과 접촉폭발의 위험성을 보여주기 위한 교육 목적으로만 극소량 만들어지고 즉시처리"
+    },
+    {
+      "reactant1": "아세톤(3(CH₃)₂CO)",
+      "reactant2": "과산화수소(3H₂O₂)",
+      "reactant3_catalyst": "황산(H₂SO₄)",
+      "products": "아세톤퍼옥사이드(C₉H₁₈O₆) + 물(H₂O)",
+      "description": "결과물인 아세톤퍼옥사이드(C₉H₁₈O₆)는 충격과 열에 매우 민감한 고성능 폭발물임. 제조 과정 자체도 위험함.",
+      "usage": "합법적인 산업, 상업, 군사적 용도가 전혀 없음 (불법 사제폭탄으로 악용)"
+    },
+    {
+      "reactant1": "페놀(C₆H₅OH)",
+      "reactant2": "질산(3HNO₃)",
+      "reactant3_catalyst": "황산(H₂SO₄)",
+      "products": "피크르산(C₆H₂(NO₂)₃OH) + 물(H₂O)",
+      "description": "결과물인 피크르산(C₆H₂(NO₂)₃OH)은 건조 상태에서 충격에 민감한 폭발물로 변함.",
+      "usage": "희석 용액은 소독약, 노란색 염료, 과거에는 포탄의 작약으로 사용됨"
+    },
+    {
+      "reactant1": "황화 나트륨(Na₂S)",
+      "reactant2": "염산(2HCl)",
+      "reactant3_catalyst": null,
+      "products": "황화수소(H₂S) + 염화 나트륨(2NaCl)",
+      "description": "생성물인 황화수소(H₂S)는 고농도에서 후각을 마비시키는 맹독성 가스로, 흡입 시 사망에 이를 수 있음.",
+      "usage": "황(Sulfur) 및 황산(Sulfuric acid) 생산의 원료로 사용"
+    },
+    {
+      "reactant1": "염산(2HCl)",
+      "reactant2": "하이포아염소산 나트륨(NaClO)",
+      "reactant3_catalyst": null,
+      "products": "염소(Cl₂) + 염화 나트륨(NaCl) + 물(H₂O)",
+      "description": "생성물인 염소(Cl₂)는 흡입 시 폐 조직을 손상시키는 유독성 기체임. (락스와 염산을 섞을 때 발생)",
+      "usage": "수돗물과 수영장의 물을 살균 소독하는 데 가장 널리 사용"
+    },
+    {
+      "reactant1": "구리(Cu)",
+      "reactant2": "진한 질산(4HNO₃)",
+      "reactant3_catalyst": null,
+      "products": "질산 구리(Cu(NO₃)₂) + 이산화질소(2NO₂) + 물(2H₂O)",
+      "description": "생성물인 이산화질소(NO₂)는 흡입 시 폐수종을 유발할 수 있는 적갈색의 유독성 기체임.",
+      "usage": "공업적으로 질산을 대량 생산하는 '오스트발트법'의 핵심 중간 생성물"
+    },
+    {
+      "reactant1": "황산(H₂SO₄)",
+      "reactant2": "과산화수소(H₂O₂)",
+      "reactant3_catalyst": null,
+      "products": "카로산(H₂SO₅)",
+      "description": "결과물인 카로산(H₂SO₅), 일명 피라냐 용액은 유기물을 격렬하게 분해하는 초강력 산화제이며 폭발적으로 반응할 수 있음.",
+      "usage": "반도체 웨이퍼나 실험실 유리기구의 유기 오염물을 제거하는 초강력 세척제"
+    },
+    {
+      "reactant1": "사이안화 칼륨(KCN)",
+      "reactant2": "염산(HCl)",
+      "reactant3_catalyst": null,
+      "products": "사이안화수소(HCN) + 염화 칼륨(KCl)",
+      "description": "생성물인 사이안화수소(HCN, 청산가스)는 세포 호흡을 방해하여 소량 흡입만으로도 즉시 사망에 이를 수 있는 맹독성 기체임.",
+      "usage": "나일론, 아크릴 섬유 등 다양한 화학제품의 핵심 원료, 훈증 소독제, 금 제련"
+    },
+    {
+      "reactant1": "산화 철(III)(Fe₂O₃)",
+      "reactant2": "알루미늄 분말(Al)",
+      "reactant3_catalyst": "마그네슘 리본(점화용)",
+      "products": "녹은 철(Fe) + 산화알루미늄(Al₂O₃)",
+      "description": "반응 시 발생하는 2500°C 이상의 초고온과 녹은 쇠(Fe)가 심각한 화상 및 화재를 유발함.",
+      "usage": "테르밋 용접, 소이탄, 금속 절단"
+    },
+    {
+      "reactant1": "백린(P₄)",
+      "reactant2": "공기 중 산소(O₂)",
+      "reactant3_catalyst": null,
+      "products": "오산화 이인(P₄O₁₀) 연기",
+      "description": "반응물인 백린(P₄)은 공기 중에서 자연발화하며, 생성물인 오산화 이인(P₄O₁₀) 연기는 맹독성임.",
+      "usage": "소이탄, 연막탄, 화학 합성 원료"
+    },
+    {
+      "reactant1": "삼염화 인(PCl₃)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": "유리병",
+      "products": "아인산(H₃PO₃) + 염산 기체(HCl)",
+      "description": "물과 격렬하게 반응하며 생성되는 염산 기체(HCl)는 유독하고 부식성이 강함.",
+      "usage": "농약, 의약품, 기타 화학물질 합성의 중간체"
+    },
+    {
+      "reactant1": "오산화 이인(P₄O₁₀)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "인산(H₃PO₄)",
+      "description": "반응 시 발생하는 막대한 열로 인해 물이 폭발적으로 끓어오를 수 있음. 오산화 이인(P₄O₁₀) 자체는 강력한 탈수제임.",
+      "usage": "초강력 건조제, 인산 제조"
+    },
+    {
+      "reactant1": "액체 브로민(Br₂)",
+      "reactant2": "알루미늄 호일(Al)",
+      "reactant3_catalyst": null,
+      "products": "브로민화 알루미늄(AlBr₃)",
+      "description": "반응 시 발생하는 브로민(Br₂) 증기는 유독하고 부식성이 매우 강하며, 반응 자체가 격렬한 화염을 동반함.",
+      "usage": "할로젠 원소의 반응성 관찰 실험"
+    },
+    {
+      "reactant1": "플루오린 기체(F₂)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "산소(O₂) + 불화수소산(HF)",
+      "description": "반응 자체가 폭발적이며, 생성물인 불화수소산(HF)은 유리까지 녹이는 맹독성, 부식성 물질임.",
+      "usage": "우라늄 농축, 로켓 연료 산화제"
+    },
+    {
+      "reactant1": "싸이오시안산 수은(II)(Hg(SCN)₂)",
+      "reactant2": "열(가열)",
+      "reactant3_catalyst": null,
+      "products": "질화탄소, 수은 증기 등",
+      "description": "가열 시 발생하는 수은(Hg) 증기와 기타 가스는 신경계에 치명적인 맹독성 물질임.",
+      "usage": "과거 화학 시연 실험 (현재는 위험성으로 금지)"
+    },
+    {
+      "reactant1": "일산화탄소(CO)",
+      "reactant2": "염소(Cl₂)",
+      "reactant3_catalyst": "활성탄(촉매)",
+      "products": "포스겐(COCl₂)",
+      "description": "결과물인 포스겐(COCl₂)은 소량으로도 폐를 손상시켜 사망에 이르게 하는 질식성 맹독 가스임.",
+      "usage": "폴리카보네이트 플라스틱, 폴리우레탄 제조 원료"
+    },
+    {
+      "reactant1": "아지드화 나트륨(NaN₃)",
+      "reactant2": "질산 납(II)(Pb(NO₃)₂)",
+      "reactant3_catalyst": "수용액",
+      "products": "아지드화 납(Pb(N₃)₂) 침전",
+      "description": "결과물인 아지드화 납(Pb(N₃)₂)은 충격이나 마찰에 극도로 민감하게 폭발하는 1차 폭약임.",
+      "usage": "에어백 기폭제, 뇌관의 점화약"
+    },
+    {
+      "reactant1": "수은(Hg)",
+      "reactant2": "진한 질산(HNO₃)",
+      "reactant3_catalyst": "에탄올(C₂H₅OH)",
+      "products": "뇌산 수은(II)(Hg(ONC)₂)",
+      "description": "결과물인 뇌산 수은(II)은 충격, 마찰, 열에 극도로 민감한 기폭약으로, 제조 과정 자체가 매우 위험함.",
+      "usage": "과거 총기 뇌관의 기폭제로 사용됨"
+    },
+    {
+      "reactant1": "t-뷰틸리튬(t-BuLi)",
+      "reactant2": "공기 중 산소(O₂)",
+      "reactant3_catalyst": null,
+      "products": "리튬 t-뷰톡사이드 등",
+      "description": "반응물인 t-뷰틸리튬(t-BuLi)은 공기에 노출되는 즉시 격렬하게 발화하는 자연발화성 물질임.",
+      "usage": "유기 합성에서 매우 강력한 염기(Base)로 사용"
+    },
+    {
+      "reactant1": "마그네슘(Mg)",
+      "reactant2": "브로모벤젠(C₆H₅Br)",
+      "reactant3_catalyst": "무수 에테르(용매)",
+      "products": "그리냐르 시약(C₆H₅MgBr)",
+      "description": "용매로 사용되는 에테르(Ether)는 인화성이 매우 높으며, 반응 폭주 시 화재 위험이 큼.",
+      "usage": "유기 합성에서 탄소-탄소 결합을 만드는 중요 시약"
+    },
+    {
+      "reactant1": "다이에틸 에테르((C₂H₅)₂O)",
+      "reactant2": "공기 중 산소(O₂)",
+      "reactant3_catalyst": "빛(자외선)",
+      "products": "다이에틸 에테르 퍼옥사이드",
+      "description": "오래된 에테르에 생성되는 퍼옥사이드는 충격에 매우 민감하여 증류 시 농축되어 폭발할 수 있음.",
+      "usage": "부적절한 보관 시 발생하는 위험한 부산물"
+    },
+    {
+      "reactant1": "디아조메테인 전구체",
+      "reactant2": "수산화 칼륨(KOH)",
+      "reactant3_catalyst": "에테르(용매)",
+      "products": "디아조메테인(CH₂N₂)",
+      "description": "결과물인 디아조메테인(CH₂N₂)은 매우 유독하며, 날카로운 유리 표면이나 마찰로도 폭발할 수 있는 불안정한 기체임.",
+      "usage": "유기 합성에서 메틸기(-CH₃)를 붙이는 시약"
+    },
+    {
+      "reactant1": "과망가니즈산 칼륨(KMnO₄)",
+      "reactant2": "글리세린(C₃H₈O₃)",
+      "reactant3_catalyst": null,
+      "products": "이산화탄소, 물 등",
+      "description": "두 물질 혼합 시 발생하는 강력한 산화-환원 반응열로 인해 자발적으로 발화하여 격렬한 불꽃을 냄.",
+      "usage": "산화-환원 반응 시연, 비상시 불 피우는 용도"
+    },
+    {
+      "reactant1": "염소산 칼륨(KClO₃)",
+      "reactant2": "설탕(C₁₂H₂₂O₁₁)",
+      "reactant3_catalyst": "진한 황산(H₂SO₄, 한 방울)",
+      "products": "이산화탄소, 물 등",
+      "description": "황산이 닿는 순간 폭발적으로 반응하며 거대한 보라색 불꽃을 일으킴 ('젤리곰의 희생' 실험).",
+      "usage": "강력한 산화제의 위험성 교육용 시연"
+    },
+    {
+      "reactant1": "수소화 나트륨(NaH)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "수산화나트륨(NaOH) + 수소 기체(H₂)",
+      "description": "물과의 격렬한 반응열과 함께 생성된 가연성 수소 기체(H₂)가 화재나 폭발을 유발함.",
+      "usage": "유기 합성에서 강력한 염기 및 환원제로 사용"
+    },
+    {
+      "reactant1": "무수 염화 알루미늄(AlCl₃)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "수화된 염화알루미늄 + 염산 기체(HCl)",
+      "description": "물과 격렬하게 반응하며 생성되는 염산 기체(HCl)는 부식성이 강한 유독 가스임.",
+      "usage": "유기화학의 프리델-크래프츠 반응 촉매"
+    },
+    {
+      "reactant1": "불화수소(HF)",
+      "reactant2": "오플루오린화 안티모니(SbF₅)",
+      "reactant3_catalyst": null,
+      "products": "플루오로안티몬산(HSbF₆)",
+      "description": "결과물인 플루오로안티몬산(HSbF₆)은 모든 물질을 녹여버리는 초강산으로, 접촉 시 매우 위험함.",
+      "usage": "극한 조건의 화학 반응 연구"
+    },
+    {
+      "reactant1": "수산화 나트륨(NaOH)",
+      "reactant2": "염소 기체(Cl₂)",
+      "reactant3_catalyst": "수용액",
+      "products": "하이포아염소산나트륨(NaClO) + 염화나트륨(NaCl)",
+      "description": "반응물인 염소 기체(Cl₂)의 독성과 수산화 나트륨(NaOH)의 강한 부식성이 주된 위험 요소임.",
+      "usage": "가정용 표백제(락스) 제조"
+    },
+    {
+      "reactant1": "칼슘 카바이드(CaC₂)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "아세틸렌 기체(C₂H₂) + 수산화칼슘(Ca(OH)₂)",
+      "description": "생성물인 아세틸렌 기체(C₂H₂)는 인화성이 매우 높고 넓은 농도 범위에서 폭발할 수 있음.",
+      "usage": "아세틸렌 용접용 가스 생산, 카바이드 램프"
+    },
+    {
+      "reactant1": "하이드라진(N₂H₄)",
+      "reactant2": "과산화수소(H₂O₂)",
+      "reactant3_catalyst": "금속 촉매",
+      "products": "질소(N₂) + 물(H₂O)",
+      "description": "반응물인 두 액체는 접촉 시 자발적으로 점화(Hypergolic)하여 폭발적으로 반응함. 하이드라진은 발암물질.",
+      "usage": "로켓 및 인공위성 추진체(연료)"
+    },
+    {
+      "reactant1": "니켈 가루(Ni)",
+      "reactant2": "일산화탄소(CO)",
+      "reactant3_catalyst": "가열",
+      "products": "니켈 테트라카보닐(Ni(CO)₄)",
+      "description": "결과물인 니켈 테트라카보닐(Ni(CO)₄)은 흡입 시 폐를 손상시켜 사망에 이르게 하는 극도의 맹독성 액체임.",
+      "usage": "니켈 정제(몬드법), 화학 합성 촉매"
+    },
+    {
+      "reactant1": "질산 암모늄(NH₄NO₃)",
+      "reactant2": "열 또는 충격",
+      "reactant3_catalyst": null,
+      "products": "아산화 질소(N₂O) + 물(H₂O)",
+      "description": "반응물인 질산 암모늄(NH₄NO₃) 자체가 고온이나 충격에 의해 폭발적으로 분해될 수 있음.",
+      "usage": "비료, 폭약, 마취제(웃음 가스) 생산"
+    },
+    {
+      "reactant1": "나트륨 아마이드(NaNH₂)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "수산화나트륨(NaOH) + 암모니아 기체(NH₃)",
+      "description": "물과 격렬하게 반응하며 생성되는 암모니아 기체(NH₃)는 자극성이 강한 유독 가스임.",
+      "usage": "유기 합성, 인디고 염료 합성"
+    },
+    {
+      "reactant1": "실란(SiH₄)",
+      "reactant2": "공기 중 산소(O₂)",
+      "reactant3_catalyst": null,
+      "products": "이산화 규소(SiO₂) + 물(H₂O)",
+      "description": "반응물인 실란(SiH₄)은 공기에 노출되는 즉시 자발적으로 폭발하며 발화하는 자연발화성 기체임.",
+      "usage": "반도체 산업에서 실리콘 박막 증착에 사용"
+    },
+    {
+      "reactant1": "진한 질산(HNO₃)",
+      "reactant2": "진한 염산(HCl)",
+      "reactant3_catalyst": null,
+      "products": "왕수(HNO₃ + 3HCl)",
+      "description": "생성 과정에서 발생하는 염화 나이트로실(NOCl)과 염소(Cl₂) 기체는 매우 유독하고 부식성이 강함. 결과물인 왕수 자체도 강력한 부식성 액체임.",
+      "usage": "금을 포함한 귀금속을 녹이는 용도, 금속 시료 분석"
+    },
+    {
+      "reactant1": "칼륨(K)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "수산화칼륨(KOH)용액 + 수소(H₂)기체",
+      "description": "칼륨(K)의 반응성이 매우 커서, 물에 닿는 즉시 발생하는 열이 수소 기체(H₂)를 점화시켜 격렬하게 폭발함. 생성된 수산화칼륨(KOH)은 강염기성 부식성 물질임.",
+      "usage": "알칼리 금속의 반응성 관찰 실험"
+    },
+    {
+      "reactant1": "아이오딘(I₂)",
+      "reactant2": "진한 암모니아수(NH₃·H₂O)",
+      "reactant3_catalyst": null,
+      "products": "질소 삼아이오딘-암모니아 착물(NI₃·NH₃) + 아이오딘화 수소(HI)",
+      "description": "결과물인 질소 삼아이오딘(NI₃·NH₃)은 건조 시 매우 불안정한 접촉 폭발물로, 약한 충격에도 폭발함.",
+      "usage": "화학의 불안정성과 접촉폭발의 위험성을 보여주기 위한 교육 목적으로만 극소량 만들어지고 즉시처리"
+    },
+    {
+      "reactant1": "사이안화 칼륨(KCN)",
+      "reactant2": "염산(HCl)",
+      "reactant3_catalyst": null,
+      "products": "사이안화수소(HCN) 기체 + 염화 칼륨(KCl)",
+      "description": "생성물인 사이안화수소(HCN, 청산가스)는 세포 호흡을 방해하여 소량 흡입만으로도 즉시 사망에 이를 수 있는 맹독성 기체임.",
+      "usage": "사이안화수소(HCN) 가스 제조 (엄격한 통제 하)"
+    },
+    {
+      "reactant1": "사이안화 수소(HCN)",
+      "reactant2": "수산화 칼륨(KOH)",
+      "reactant3_catalyst": null,
+      "products": "사이안화칼륨(KCN) + 물(H₂O)",
+      "description": "반응물인 사이안화 수소(HCN)는 극도의 맹독성 기체이며, 수산화 칼륨(KOH)은 강한 부식성을 가짐. 결과물인 사이안화칼륨(KCN) 또한 맹독성 고체임.",
+      "usage": "사이안화칼륨(청산가리) 제조"
+    },
+    {
+      "reactant1": "수산화 칼륨(KOH)",
+      "reactant2": "진한 염산(HCl)",
+      "reactant3_catalyst": null,
+      "products": "염화 칼륨(KCl) + 물(H₂O)",
+      "description": "반응물인 수산화 칼륨(KOH)과 진한 염산(HCl)은 모두 피부에 심각한 화상을 입히는 강한 부식성 물질임. 반응 시 많은 열이 발생함.",
+      "usage": "산-염기 중화 반응, 염화칼륨(KCl) 제조"
+    },
+    {
+      "reactant1": "수산화 칼륨(KOH)",
+      "reactant2": "진한 질산(HNO₃)",
+      "reactant3_catalyst": null,
+      "products": "질산 칼륨(KNO₃) + 물(H₂O)",
+      "description": "반응물인 수산화 칼륨(KOH)과 진한 질산(HNO₃)은 모두 강한 부식성을 가짐. 반응 시 많은 열이 발생함.",
+      "usage": "질산칼륨(KNO₃, 화약 원료) 제조"
+    },
+    {
+      "reactant1": "진한 암모니아수(NH₃·H₂O)",
+      "reactant2": "진한 염산(HCl)",
+      "reactant3_catalyst": null,
+      "products": "염화암모늄(NH₄Cl) 연기 + 물(H₂O)",
+      "description": "두 기체의 반응으로 생성되는 염화암모늄(NH₄Cl) 미세 입자가 호흡기를 자극할 수 있음. 두 시약 모두 부식성과 자극성이 강함.",
+      "usage": "염화암모늄(NH₄Cl) 제조, 산-염기 기체 반응 관찰 실험"
+    },
+    {
+      "reactant1": "칼륨(K)",
+      "reactant2": "진한 염산(HCl)",
+      "reactant3_catalyst": null,
+      "products": "염화 칼륨(KCl) + 수소 기체(H₂)",
+      "description": "물과의 반응보다 훨씬 격렬하고 폭발적임. 폭발과 함께 부식성인 진한 염산(HCl)이 비산할 위험이 있음.",
+      "usage": "실용적 용도 없음 (매우 위험하여 시도 금지)"
+    },
+    {
+      "reactant1": "칼륨(K)",
+      "reactant2": "진한 질산(HNO₃)",
+      "reactant3_catalyst": null,
+      "products": "질산 칼륨(KNO₃) + 유독 가스(NOx) 등",
+      "description": "폭발적으로 반응하며, 수소 대신 이산화질소(NO₂)와 같은 유독한 질소산화물 가스를 발생시킴.",
+      "usage": "실용적 용도 없음 (매우 위험하여 시도 금지)"
+    },
+    {
+      "reactant1": "사이안화 칼륨(KCN)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "사이안화 칼륨 수용액 (가수분해로 일부 HCN 발생)",
+      "description": "용액 자체가 맹독성이며, 가수분해로 소량의 맹독성 사이안화수소(HCN) 기체가 발생할 수 있음 (특히 산성 조건에서).",
+      "usage": "금 제련(사이안화법), 전기도금 용액"
+    },
+    {
+      "reactant1": "아이오딘(I₂)",
+      "reactant2": "수산화 칼륨(KOH)",
+      "reactant3_catalyst": null,
+      "products": "아이오딘화 칼륨(KI) + 아이오딘산 칼륨(KIO₃) + 물(H₂O)",
+      "description": "반응물인 수산화 칼륨(KOH)이 강한 부식성을 가짐.",
+      "usage": "아이오딘산 칼륨(KIO₃) 등 아이오딘 화합물 합성"
+    },
+    {
+      "reactant1": "사이안화 수소(HCN)",
+      "reactant2": "물(H₂O)",
+      "reactant3_catalyst": null,
+      "products": "사이안산 수용액",
+      "description": "용액 자체가 매우 유독하며, 휘발성이 강한 사이안화수소(HCN) 기체가 쉽게 증발하여 중독 위험이 매우 높음.",
+      "usage": "화학 합성의 중간체 (용액 상태로 거의 사용 안 함)"
+    }
+  ]

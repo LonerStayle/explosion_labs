@@ -13,7 +13,7 @@ app = FastAPI(
 
 @app.get("/health", tags=["헬스 체크"])
 def health_check():
-    return {"status":"ok"}
+    return {"gggg":"ogggk"}
 
 
 @app.websocket("/ws/combination")
