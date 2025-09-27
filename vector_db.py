@@ -145,7 +145,7 @@ if __name__ == "__main__":
     # 실제로는 파일에서 읽어오거나, 긴 문서를 여러 조각으로 나눈 데이터가 될 수 있습니다.
     
     my_documents = load_json_or_jsonl(r"C:\PythonProject\explosion_labs\app\data\help_chat_doc.jsonl")
-
+    
 
     print("1. OpenAI API를 사용하여 임베딩을 생성합니다...")
     # 문서들을 벡터로 변환합니다.

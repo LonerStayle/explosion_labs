@@ -16,11 +16,11 @@ COMBINATION_MESSAGE_USER = """아래 입력값을 참고해 CombinationRes JSON 
 1. 항상 CombinationRes JSON 객체만 출력한다.
 2. `result_1`은 화학 반응으로 생성된 주요 물질(없으면 null 대신 빈 문자열).
 3. `result_2`는 보조 생성물(없으면 null).
-4. `scenario_answer`는 주어진 시나리오에서 기대되는 정답 물질.
+4. `scenario_answer`는 주어진 scenario의 정답 물질.
 5. `result_state`는 다음 규칙으로 결정한다:
    - `result_1 == scenario_answer` → "SUCCESS"
-   - `result_1 != scenario_answer` 이지만 새로운 화합물이 생성됨 → "BAD"
-   - 새로운 화합물 생성이 없음 → "NOTHING"
+   - `result_1 != scenario_answer` 이지만 `result_1`이 존재하면 → "BAD"
+   - `result_1`이 존재하지 않으면 → "NOTHING"
 6. 모든 Enum 값은 정확히 정의된 문자열만 사용한다.
 
 {format_instructions}
@@ -55,7 +55,7 @@ HELP_MESSAGE_SYSTEM = """
 
 [EXAMPLES]
 - Target = "수소(H₂)", PlayerChoice = "염산(HCl)"
-  A: "이건 '염'으로 시작하는 특별한 용액이야. 이름 앞에 H로 시작한다구!"
+  A: "이건 '염'으로 시작하는 특별한 용액이야. 화학식은 H로 시작한다구!"
 
 - Target = "탄산칼슘(CaCO₃)", PlayerChoice = "소금(NaCl)"
   A: "음~ 소금은 반응이 잘 안 해. 다른 하얀 가루를 찾아볼래?"
