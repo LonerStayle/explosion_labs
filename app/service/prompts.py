@@ -12,16 +12,21 @@ COMBINATION_MESSAGE_USER = """아래 입력값을 참고해 CombinationRes JSON 
 - material_b: {material_b}
 - scenario: {scenario}
 
+[참고 자료]
+{context}
+
 [출력 규칙]
 1. 항상 CombinationRes JSON 객체만 출력한다.
+2. **[참고 자료]에 있는 모든 필드(`scenario`, `scenario_answer`, `result_1`, `result_2`, `result_state_detail`, `gold_melt`, `result_state`, `player_state`, `comment`)의 값을 '절대 변경하지 말고 그대로' 출력 JSON에 채워 넣어라.**
 2. `result_1`은 화학 반응으로 생성된 주요 물질(없으면 null 대신 빈 문자열).
 3. `result_2`는 보조 생성물(없으면 null).
 4. `scenario_answer`는 주어진 scenario의 정답 물질.
-5. `result_state`는 다음 규칙으로 결정한다:
-   - `result_1 == scenario_answer` → "SUCCESS"
-   - `result_1 != scenario_answer` 이지만 `result_1`이 존재하면 → "BAD"
-   - `result_1`이 존재하지 않으면 → "NOTHING"
-6. 모든 Enum 값은 정확히 정의된 문자열만 사용한다.
+5. `result_state_detail`는 화학 반응의 결과를 나타내는 문자열.
+6. `gold_melt`는 `result_1`, `result_2` 중 하나가 금을 녹일 수 있는 경우 `true`, 금을 녹일 수 없는 경우우 `false`.
+7. `player_state`는 플레이어의 상태를 나타내는 문자열.
+8. `result_state`는 해당 `scenario`에서 플레이어의 결과를 나타내는 문자열.
+9. 모든 Enum 값은 정확히 정의된 문자열만 사용한다.
+10. 절대 스스로 값을 계산하거나 창작해서는 안 된다.
 
 {format_instructions}
 """

@@ -24,25 +24,31 @@ service = AiService()
 def health_check():
     return {"gggg":"ogggk"}
 
-@app.post("/combination", response_model=BaseRes[CombinationRes])
-async def combination_api(req: CombinationReq):
-    fake_res = CombinationRes(
-        material_a=ElementSymbols.ZN,
-        material_b=ElementSymbols.HCL,
-        result_1=ElementSymbols.H2,
-        result_2=ElementSymbols.HNO3,
-        result_state=CombinationResultState.SUCCESS,  # 예시 enum 값
-        result_state_detail=CombinationResultStateDetail.NOTHING,  # 예시 enum 값
-        gold_melt=False,
-        player_state=PlayerState.NO_DAMAGE,              # 예시 enum 값
-        scenario=GameScenario.COMBINE_HNO3HCL,        # 예시 enum 값
-        scenario_answer=ElementSymbols.H2,
-        comment = "AI 가 응답할 메시지 ㅁ니ㅏ워마닝"
-    )
-    return BaseRes(data=fake_res)
-    # result = await service.combination_message(req)
-    # return BaseRes(data=result)
 
+
+@app.post("/combination", response_model=BaseRes[CombinationRes], tags=["게임 API"])
+async def combination_api(req: CombinationReq):
+    """
+    combination_api (비동기 함수)
+
+    [목적]
+    - 클라이언트(게임)로부터 두 개의 화학물질과 시나리오 정보를 받아 조합 결과를 반환합니다.
+    - 실제 로직은 AiService의 combination_message 함수에 위임합니다.
+
+    [파라미터]
+    - req (CombinationReq): API 요청의 본문(body)에 담겨온 JSON 데이터입니다.
+      FastAPI가 CombinationReq 모델에 따라 데이터의 유효성을 자동으로 검사하고 객체로 만들어줍니다.
+    
+    [반환]
+    - BaseRes[CombinationRes]: AiService로부터 받은 CombinationRes 결과를 표준 응답 형식(BaseRes)으로
+      감싸서 클라이언트에 JSON 형태로 반환합니다.
+    """
+    # 테스트용 가짜 데이터 대신, 실제 AI 서비스를 호출gka
+    # 'await'는 비동기 함수인 service.combination_message가 끝날 때까지 기다리라는 의미입니다.
+    result = await service.combination_message(req)
+    
+    # 성공적으로 처리된 결과를 표준 응답 래퍼(BaseRes)로 감싸서 반환합니다.
+    return BaseRes(data=result)
 
 
 @app.post("/help_chat")
