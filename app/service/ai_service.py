@@ -1,139 +1,131 @@
-import os, pickle, faiss
+# C:\explosion_labs\app\service\ai_service.py (최종 완성본 + 디버깅 코드)
 
-from app.dto.HelpChatReq import HelpChatReq
-from langchain_openai import ChatOpenAI
-from langchain_openai import OpenAIEmbeddings
-from langchain_community.vectorstores import FAISS
-from langchain.docstore.in_memory import InMemoryDocstore
-from langchain.schema import Document
-from langchain.output_parsers import OutputFixingParser
-from app.service.parser import combination_parser
-from app.dto.CombinationReq import CombinationReq
-from app.dto.CombinationRes import CombinationRes
-from app.service.prompts import (
-    combination_prompt,
-    help_chat_prompt,
-)
+import os
+import pickle
+import faiss
 from dotenv import load_dotenv
 
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
+from langchain_community.vectorstores import FAISS
+from langchain_community.docstore.in_memory import InMemoryDocstore
+from langchain.schema import Document
+from langchain.output_parsers import OutputFixingParser
+
+# --- DTO 및 서비스 모듈 임포트 ---
+from app.dto.CombinationReq import CombinationReq
+from app.dto.HelpChatReq import HelpChatReq
+from app.service.parser import combination_parser
+from app.service.prompts import combination_prompt, help_chat_prompt
+
+# --- [핵심 수정] .env 파일에서 API 키를 로드하고 변수에 저장합니다. ---
+# 이 코드는 반드시 클래스 바깥, 파일의 최상단에 있어야 합니다.
 load_dotenv()
-key = os.getenv("OPENAI_API_KEY")
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+
+# --- [디버깅 코드] API 키가 제대로 로드되었는지 확인합니다. ---
+# 스크립트 실행 시 터미널에 "OpenAI API Key Loaded: True" 라고 나와야 정상입니다.
+# 만약 "False"라고 나오면 .env 파일에 문제가 있는 것입니다.
+print(f"OpenAI API Key Loaded: {OPENAI_API_KEY is not None and OPENAI_API_KEY.startswith('sk-')}")
 
 
 class AiService:
     def __init__(self):
-        faiss_index = faiss.read_index("help_chat.index")
+        """
+        AiService 클래스가 처음 생성될 때(서버 시작 시) 한 번만 실행되는 초기화 함수입니다.
+        AI 모델, 임베딩 모델, 그리고 RAG에 필요한 벡터 데이터베이스를 미리 로드하여
+        API 요청이 왔을 때 빠르게 처리할 수 있도록 준비합니다.
+        """
+        # --- 더 안정적인 파일 경로 설정 ---
+        project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+        help_chat_index_path = os.path.join(project_root, "help_chat.index")
+        help_chat_pkl_path = os.path.join(project_root, "help_chat_documents.pkl")
+        combination_index_path = os.path.join(project_root, "combination.index")
+        combination_pkl_path = os.path.join(project_root, "combination_documents.pkl")
+
+        # --- 공통 설정: 임베딩 모델 로드 ---
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
-        # 도움말(help_chat)용 벡터 DB 및 검색기(Retriever) 설정
-        # vector_db.py에서 생성한 도움말용 FAISS 인덱스 파일 로드
+        # --- 1. 도움말(Help Chat)용 벡터 DB 및 검색기(Retriever) 설정 ---
+        help_chat_index = faiss.read_index(help_chat_index_path)
         
-# -------------------------
-        with open("help_chat_docments.pkl", "rb") as f:
-            raw_docs = pickle.load(f)
-        # 불러온 원본 문서를 LangChain에서 사용하기 좋은 Document 객체로 변환
-        help_chat_documents = []
-        for d in raw_docs:
-            
-            if isinstance(d, dict):
-                help_chat_documents.append(
-                    Document(page_content=d.get("description", ""), metadata=d)
-                )
-            else:
-                help_chat_documents.append(d)
+        with open(help_chat_pkl_path, "rb") as f:
+            raw_help_docs = pickle.load(f)
 
-        docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
+        help_chat_documents = []
+        for d in raw_help_docs:
+            document_text = " | ".join([str(v) for v in d.values() if v])
+            help_chat_documents.append(
+                Document(page_content=document_text, metadata=d)
+            )
+
+        help_chat_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
+        
         self.help_vectordb = FAISS(
             embedding_function=self.embeddings,
-            index=faiss_index,
-            docstore=docstore,
+            index=help_chat_index,
+            docstore=help_chat_docstore,
             index_to_docstore_id={i: str(i) for i in range(len(help_chat_documents))},
         )
-        self.help_retriver = self.help_vectordb.as_retriever(search_kwargs={"k": 2})
-# -------------------------
-# 화인님이 하실 부분 위 헬프챗 도큐먼트 코드 참고 
-# Combination용 벡터 DB 및 검색기(Retriever) 설정
+        self.help_retriever = self.help_vectordb.as_retriever(search_kwargs={"k": 2})
 
-# -------------------------
-        # vector_db.py에서 생성한 화학물질 조합 데이터용 FAISS 인덱스 파일 로드
-        # 조합 데이터용 문서 저장소(docstore)를 설정합니다.
+        # --- 2. 조합(Combination)용 벡터 DB 및 검색기(Retriever) 설정 ---
+        combination_index = faiss.read_index(combination_index_path)
+
+        with open(combination_pkl_path, "rb") as f:
+            raw_combination_docs = pickle.load(f)
+
+        combination_documents = []
+        for d in raw_combination_docs:
+            document_text = f"{d.get('scenario')} | {d.get('material_a')} | {d.get('material_b')}"
+            combination_documents.append(
+                Document(page_content=document_text, metadata=d)
+            )
+
         combination_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(combination_documents)})
         
-        # 조합 데이터용 LangChain FAISS 벡터DB 객체를 생성합니다.
         self.combination_vectordb = FAISS(
             embedding_function=self.embeddings,
             index=combination_index,
             docstore=combination_docstore,
             index_to_docstore_id={i: str(i) for i in range(len(combination_documents))},
         )
-        # 조합 검색기는 가장 유사한 1개(k=1)의 결과만 찾으면 충분합니다.
         self.combination_retriever = self.combination_vectordb.as_retriever(search_kwargs={"k": 1})
 
         # --- 3. LLM (언어 모델) 및 파서(Parser) 설정 ---
-        # 상대적으로 간단한 작업에 사용할 가볍고 빠른 모델
+        # 파일 최상단에서 정의한 OPENAI_API_KEY 변수를 여기서 사용합니다.
         self.nano_llm = ChatOpenAI(
             openai_api_key=OPENAI_API_KEY, model="gpt-4o-mini"
         )
-        # LLM이 JSON 형식을 잘못 출력했을 때, 스스로 수정하도록 돕는 파서입니다.
         self.fixing_combi_parser = OutputFixingParser.from_llm(
             llm=self.nano_llm,
             parser=combination_parser,
         )
 
     async def combination_message(self, req: CombinationReq):
-        """
-        화학물질 조합 요청을 받아 RAG를 통해 정확한 결과를 찾아 LLM으로 처리하는 비동기 함수.
-
-        [파라미터]
-        - req (CombinationReq): 플레이어가 요청한 조합 재료(material_a, material_b)와
-                                현재 시나리오(scenario)가 담긴 데이터 객체.
-        """
-        # --- [수정] RAG 로직 추가 ---
-        # 1. 벡터 DB에서 검색할 질문(Query)을 만듭니다.
-        #    요청받은 시나리오와 재료들을 합쳐서 가장 유사한 데이터를 찾도록 합니다.
         query = f"{req.scenario.value} | {req.material_a.value} | {req.material_b.value}"
-
-        # 2. 위에서 만든 검색기(retriever)로 가장 유사한 문서를 DB에서 찾습니다.
-        #    .get_relevant_documents()는 LangChain 라이브러리에서 제공하는 검색 함수입니다.
         docs = self.combination_retriever.get_relevant_documents(query)
 
-        # 3. 찾은 문서(docs)를 LLM 프롬프트에 넣어줄 'context' 문자열로 가공합니다.
-        #    검색된 문서가 없다면 빈 문자열을, 있다면 찾은 문서의 전체 내용(metadata)을
-        #    문자열로 만들어 context로 사용합니다.
         if not docs:
             context = "일치하는 조합 데이터를 찾지 못했습니다."
         else:
-            # docs[0]는 검색된 문서 중 가장 유사도가 높은 첫 번째 문서를 의미합니다.
-            # .metadata에는 .pkl 파일에 저장했던 원본 딕셔너리 전체가 들어있습니다.
             context = str(docs[0].metadata)
         
-        # LangChain의 체인(Chain)을 구성합니다.
-        # [프롬프트 템플릿] -> [LLM] -> [출력 파서] 순서로 데이터가 처리됩니다.
         chain = combination_prompt | self.nano_llm | self.fixing_combi_parser
         
-        # 4. 체인을 실행(ainvoke)합니다. 프롬프트에 필요한 모든 값을 딕셔너리 형태로 전달합니다.
         resp = await chain.ainvoke({
             "material_a": req.material_a.value,
             "material_b": req.material_b.value,
             "scenario": req.scenario.value,
-            "context": context, # RAG를 통해 찾은 '참고 자료'를 여기에 전달합니다.
+            "context": context,
             "format_instructions": self.fixing_combi_parser.get_format_instructions(),
         })
         return resp
 
     async def help_message(self, req: HelpChatReq):
-        """
-        도움말 요청을 받아 RAG를 통해 관련 지식을 찾아 LLM으로 답변을 생성하는 비동기 함수.
-
-        [파라미터]
-        - req (HelpChatReq): 플레이어의 질문(question), 선택 재료, 시나리오가 담긴 데이터 객체.
-        """
-        # 1. 사용자의 질문으로 도움말 DB에서 관련 문서를 찾습니다.
         docs = self.help_retriever.get_relevant_documents(req.question)
-        # 2. 찾은 문서들의 핵심 내용(page_content)을 합쳐서 context를 만듭니다.
         context = "\n".join([d.page_content for d in docs])
         
-        # 도움말 생성용 체인을 구성하고 실행합니다.
         chain = help_chat_prompt | self.nano_llm
         resp = await chain.ainvoke({
             "material": req.select_material,
@@ -141,5 +133,4 @@ class AiService:
             "context": context,
             "scenario": req.scenario,
         })
-        # LLM의 답변 내용(.content)을 최종 결과로 반환합니다.
-        return resp.conten
+        return resp.content
