@@ -8,10 +8,10 @@ from typing import Optional
 
 
 class CombinationRes(BaseModel):
-    material_a: str
-    material_b: str
+    material_a: ElementSymbols
+    material_b: ElementSymbols
     result_1: Optional[ElementSymbols] = None
-    result_2: Optional[str] = None
+    result_2: Optional[ElementSymbols] = None
     result_state: CombinationResultState
     result_state_detail: CombinationResultStateDetail
     gold_melt: bool

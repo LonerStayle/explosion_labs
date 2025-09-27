@@ -26,21 +26,23 @@ def health_check():
 
 @app.post("/combination", response_model=BaseRes[CombinationRes])
 async def combination_api(req: CombinationReq):
-    # fake_res = CombinationRes(
-    #     material_a="Zn",
-    #     material_b="HCl",
-    #     result_1=ElementSymbols.H2,
-    #     result_2="H2",
-    #     result_state=CombinationResultState.SUCCESS,  # 예시 enum 값
-    #     result_state_detail=CombinationResultStateDetail.NOTHING,  # 예시 enum 값
-    #     gold_melt=False,
-    #     player_state=PlayerState.NO_DAMAGE,              # 예시 enum 값
-    #     scenario=GameScenario.COMBINE_HNO3HCL,        # 예시 enum 값
-    #     scenario_answer=ElementSymbols.H2,
-    #     comment = "질문해보세요"
-    # )
-    result = await service.combination_message(req)
-    return BaseRes(data=result)
+    fake_res = CombinationRes(
+        material_a=ElementSymbols.ZN,
+        material_b=ElementSymbols.HCL,
+        result_1=ElementSymbols.H2,
+        result_2=ElementSymbols.HNO3,
+        result_state=CombinationResultState.SUCCESS,  # 예시 enum 값
+        result_state_detail=CombinationResultStateDetail.NOTHING,  # 예시 enum 값
+        gold_melt=False,
+        player_state=PlayerState.NO_DAMAGE,              # 예시 enum 값
+        scenario=GameScenario.COMBINE_HNO3HCL,        # 예시 enum 값
+        scenario_answer=ElementSymbols.H2,
+        comment = "AI 가 응답할 메시지 ㅁ니ㅏ워마닝"
+    )
+    return BaseRes(data=fake_res)
+    # result = await service.combination_message(req)
+    # return BaseRes(data=result)
+
 
 
 @app.post("/help_chat")
