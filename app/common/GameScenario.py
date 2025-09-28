@@ -2,7 +2,7 @@
 from enum import Enum
 
 class GameScenario(str, Enum):
-    COMBINE_HNO3HCL = "COMBINE_HNO3HCL"
+    COMBINE_HNO33HCL = "COMBINE_HNO33HCL"
     USE_HNO3HCL = "USE_HNO3HCL"
     COMBINE_KOH = "COMBINE_KOH"
     COMBINE_KCL = "COMBINE_KCL"

@@ -24,7 +24,7 @@ service = AiService()
 def health_check():
     return {"gggg":"ogggk"}
 
-@app.post("/combination", response_model=BaseRes[CombinationRes])
+@app.post("/combination", response_model=BaseRes[CombinationRes], tags=["화학 조합 API"])
 async def combination_api(req: CombinationReq):
     # fake_res = CombinationRes(
     #     material_a=ElementSymbols.ZN,
@@ -42,7 +42,6 @@ async def combination_api(req: CombinationReq):
     # return BaseRes(data=fake_res)
     result = await service.combination_message(req)
     return BaseRes(data=result)
-
 
 
 @app.post("/help_chat")

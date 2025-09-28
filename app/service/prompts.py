@@ -12,16 +12,21 @@ COMBINATION_MESSAGE_USER = """아래 입력값을 참고해 CombinationRes JSON 
 - material_b: {material_b}
 - scenario: {scenario}
 
+[참고 자료]
+{context}
+
 [출력 규칙]
 1. 항상 CombinationRes JSON 객체만 출력한다.
+2. **[참고 자료]에 있는 모든 필드(`scenario`, `scenario_answer`, `result_1`, `result_2`, `result_state_detail`, `gold_melt`, `result_state`, `player_state`, `comment`)의 값을 '절대 변경하지 말고 그대로' 출력 JSON에 채워 넣어라.**
 2. `result_1`은 화학 반응으로 생성된 주요 물질(없으면 null 대신 빈 문자열).
 3. `result_2`는 보조 생성물(없으면 null).
-4. `scenario_answer`는 주어진 시나리오에서 기대되는 정답 물질.
-5. `result_state`는 다음 규칙으로 결정한다:
-   - `result_1 == scenario_answer` → "SUCCESS"
-   - `result_1 != scenario_answer` 이지만 새로운 화합물이 생성됨 → "BAD"
-   - 새로운 화합물 생성이 없음 → "NOTHING"
-6. 모든 Enum 값은 정확히 정의된 문자열만 사용한다.
+4. `scenario_answer`는 주어진 scenario의 정답 물질.
+5. `result_state_detail`는 화학 반응의 결과를 나타내는 문자열.
+6. `gold_melt`는 `result_1`, `result_2` 중 하나가 금을 녹일 수 있는 경우 `true`, 금을 녹일 수 없는 경우우 `false`.
+7. `player_state`는 플레이어의 상태를 나타내는 문자열.
+8. `result_state`는 해당 `scenario`에서 플레이어의 결과를 나타내는 문자열.
+9. 모든 Enum 값은 정확히 정의된 문자열만 사용한다.
+10. 절대 스스로 값을 계산하거나 창작해서는 안 된다.
 
 {format_instructions}
 """
@@ -33,8 +38,8 @@ HELP_MESSAGE_SYSTEM = """
 "정답을 직접 말하지 않고" 힌트로만 짧게 안내한다.
 
 [OUTPUT STYLE]
-- 항상 한국어 1문장(최대 25자), 필요 시 최대 2문장.
-- 감탄사/이모지/군말 금지. 짧고 명료하게.
+- 어린이 상대하듯이 밝고 존댓말로 존중한다.
+- 항상 한국어 1문장(최대 25자), 필요 시 최대 2문장
 - 지시·설명은 '암시'로만(앞글자/성질/색/냄새/오브젝트 단서).
 - 화학 기호는 모두 한글로 풀어쓴다. 예시: H20 -> 물
 - 입력으로 화학 기호(K, H2O, HCl 등)가 오더라도 반드시 한국어 명칭(칼륨, 물, 염산…)으로만 말한다.
