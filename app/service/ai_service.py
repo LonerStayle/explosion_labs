@@ -17,6 +17,7 @@ from app.dto.HelpChatReq import HelpChatReq
 from app.service.parser import combination_parser
 from app.dto.CombinationRes import CombinationRes
 from app.service.prompts import (
+    comment_prompt,
     combination_prompt,
     help_chat_prompt,
 )
@@ -40,37 +41,34 @@ class AiService:
         # --- 더 안정적인 파일 경로 설정 ---
         project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-        help_chat_index_path = os.path.join(project_root, "help_chat.index")
-        help_chat_pkl_path = os.path.join(project_root, "help_chat_documents.pkl")
         combination_index_path = os.path.join(project_root, "combination.index")
         combination_pkl_path = os.path.join(project_root, "combination_documents.pkl")
         self.embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
 
         # --- 1. 도움말(Help Chat)용 벡터 DB 및 검색기(Retriever) 설정 ---
-        help_chat_index = faiss.read_index(help_chat_index_path)
+        help_chat_index = faiss.read_index(combination_index_path)
     
-        with open(help_chat_pkl_path, "rb") as f:
+        with open(combination_pkl_path, "rb") as f:
             raw_help_docs = pickle.load(f)
-        help_chat_documents = []
+        combination_documents = []
         for d in raw_help_docs:
-            if isinstance(d, dict):
-                help_chat_documents.append(
-                    Document(page_content=d.get("description", ""), metadata=d)
-                )
-            else:
-                help_chat_documents.append(d)
+            document_text = f"{d.get('scenario')} | {d.get('material_a')} | {d.get('material_b')}"
+            combination_documents.append(
+                Document(page_content=document_text, metadata=d)
+            )
 
-        help_chat_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
+
+        help_chat_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(combination_documents)})
         self.help_vectordb = FAISS(
             embedding_function=self.embeddings,
             index=help_chat_index,
             docstore=help_chat_docstore,
-            index_to_docstore_id={i: str(i) for i in range(len(help_chat_documents))},
+            index_to_docstore_id={i: str(i) for i in range(len(combination_documents))},
         )
         
         self.help_retriver = self.help_vectordb.as_retriever(search_kwargs={"k": 1})
-        self.help_chat_documents = help_chat_documents
-        tokenized_corpus = [doc.page_content.split() for doc in help_chat_documents]
+        self.help_chat_documents = combination_documents
+        tokenized_corpus = [doc.page_content.split() for doc in combination_documents]
         self.help_bm25 = BM25Okapi(tokenized_corpus)
 
 
@@ -111,6 +109,7 @@ class AiService:
         )
 
     
+    
     async def combination_message(self, req: CombinationReq):
         query = f"{req.scenario.value} | {req.material_a.value} | {req.material_b.value}"
         docs = self.combination_retriever.get_relevant_documents(query)
@@ -121,7 +120,6 @@ class AiService:
             context = str(docs[0].metadata)
         
         chain = combination_prompt | self.mini_llm | self.fixing_combi_parser
-        
         resp = await chain.ainvoke({
             "material_a": req.material_a.value,
             "material_b": req.material_b.value,
@@ -129,6 +127,17 @@ class AiService:
             "context": context,
             "format_instructions": self.fixing_combi_parser.get_format_instructions(),
         })
+
+        if resp.result_1 == resp.scenario_answer:
+            resp.result_state = "SUCCESS"
+        elif resp.result_1:
+            resp.result_state = "BAD"
+        else:
+            resp.result_state = "NOTHING"
+        
+        comment_chain = comment_prompt | self.nano_llm
+        comment = await comment_chain.ainvoke({"result_state": resp.result_state})
+        resp.comment = comment.content
         return resp
 
 
@@ -171,7 +180,6 @@ class AiService:
             top_idx = hybrid_scores.argsort()[::-1][:1]
             final_docs = [self.help_chat_documents[i] for i in top_idx]
             context = "\n".join([d.page_content for d in final_docs])
-            print("context 호출:", context)
 
         # --- LLM 호출 ---
         chain = help_chat_prompt | self.nano_llm
