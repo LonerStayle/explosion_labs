@@ -15,18 +15,26 @@ from langchain.output_parsers import OutputFixingParser
 from app.dto.CombinationReq import CombinationReq
 from app.dto.HelpChatReq import HelpChatReq
 from app.service.parser import combination_parser
-from app.service.prompts import combination_prompt, help_chat_prompt
-
-# --- [핵심 수정] .env 파일에서 API 키를 로드하고 변수에 저장합니다. ---
-# 이 코드는 반드시 클래스 바깥, 파일의 최상단에 있어야 합니다.
+from app.dto.CombinationReq import CombinationReq
+from app.dto.CombinationRes import CombinationRes
+from app.service.prompts import (
+    combination_prompt,
+    help_chat_prompt,
+)
+from dotenv import load_dotenv
+from rank_bm25 import BM25Okapi
+import numpy as np
+from app.service.contract import is_chemical_question, compute_hint_case_advanced
+from app.common.GameScenario import GameScenario
 load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+key = os.getenv("OPENAI_API_KEY")
 
-# --- [디버깅 코드] API 키가 제대로 로드되었는지 확인합니다. ---
-# 스크립트 실행 시 터미널에 "OpenAI API Key Loaded: True" 라고 나와야 정상입니다.
-# 만약 "False"라고 나오면 .env 파일에 문제가 있는 것입니다.
-print(f"OpenAI API Key Loaded: {OPENAI_API_KEY is not None and OPENAI_API_KEY.startswith('sk-')}")
-
+def normalize(scores):
+    scores = np.array(scores, dtype=float)
+    if scores.max() == scores.min():
+        return np.ones_like(scores)  # 전부 같은 점수면 1로 세팅
+    return (scores - scores.min()) / (scores.max() - scores.min())
+    
 
 class AiService:
     def __init__(self):
@@ -53,47 +61,34 @@ class AiService:
             raw_help_docs = pickle.load(f)
 
         help_chat_documents = []
-        for d in raw_help_docs:
-            document_text = " | ".join([str(v) for v in d.values() if v])
-            help_chat_documents.append(
-                Document(page_content=document_text, metadata=d)
-            )
-
-        help_chat_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
+        for d in raw_docs:
+            if isinstance(d, dict):
+                help_chat_documents.append(
+                    Document(page_content=d.get("description", ""), metadata=d)
+                )
+            else:
+                help_chat_documents.append(d)
         
+
+        docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
         self.help_vectordb = FAISS(
             embedding_function=self.embeddings,
             index=help_chat_index,
             docstore=help_chat_docstore,
             index_to_docstore_id={i: str(i) for i in range(len(help_chat_documents))},
         )
-        self.help_retriever = self.help_vectordb.as_retriever(search_kwargs={"k": 2})
+        self.help_retriver = self.help_vectordb.as_retriever(search_kwargs={"k": 1})
+        self.help_chat_documents = help_chat_documents
 
-        # --- 2. 조합(Combination)용 벡터 DB 및 검색기(Retriever) 설정 ---
-        combination_index = faiss.read_index(combination_index_path)
+        # --- BM25 ---
+        tokenized_corpus = [doc.page_content.split() for doc in help_chat_documents]
+        self.help_bm25 = BM25Okapi(tokenized_corpus)
 
-        with open(combination_pkl_path, "rb") as f:
-            raw_combination_docs = pickle.load(f)
+# -------------------------
+# 화인님이 하실 부분 위 헬프챗 도큐먼트 코드 참고 
+# -------------------------
 
-        combination_documents = []
-        for d in raw_combination_docs:
-            document_text = f"{d.get('scenario')} | {d.get('material_a')} | {d.get('material_b')}"
-            combination_documents.append(
-                Document(page_content=document_text, metadata=d)
-            )
 
-        combination_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(combination_documents)})
-        
-        self.combination_vectordb = FAISS(
-            embedding_function=self.embeddings,
-            index=combination_index,
-            docstore=combination_docstore,
-            index_to_docstore_id={i: str(i) for i in range(len(combination_documents))},
-        )
-        self.combination_retriever = self.combination_vectordb.as_retriever(search_kwargs={"k": 1})
-
-        # --- 3. LLM (언어 모델) 및 파서(Parser) 설정 ---
-        # 파일 최상단에서 정의한 OPENAI_API_KEY 변수를 여기서 사용합니다.
         self.nano_llm = ChatOpenAI(
             openai_api_key=OPENAI_API_KEY, model="gpt-4o-mini"
         )
@@ -102,6 +97,9 @@ class AiService:
             parser=combination_parser,
         )
 
+    
+
+    
     async def combination_message(self, req: CombinationReq):
         query = f"{req.scenario.value} | {req.material_a.value} | {req.material_b.value}"
         docs = self.combination_retriever.get_relevant_documents(query)
@@ -122,15 +120,58 @@ class AiService:
         })
         return resp
 
+
     async def help_message(self, req: HelpChatReq):
-        docs = self.help_retriever.get_relevant_documents(req.question)
-        context = "\n".join([d.page_content for d in docs])
-        
+        hint_case = compute_hint_case_advanced(req.scenario, req.select_material, req.question)
+        if not is_chemical_question(req.question):
+            print("0000:", 0000)
+            chain = help_chat_prompt | self.nano_llm
+            resp = await chain.ainvoke(
+                {
+                    "material": req.select_material,
+                    "question": req.question,
+                    "context": "일상 대화중",
+                    "hint_case": hint_case, 
+                    "scenario": req.scenario,
+                }
+            )
+            return resp.content
+        is_use_scenario = (req.scenario == GameScenario.USE_HNO3HCL) or (req.scenario == GameScenario.USE_HNO3HCL)
+        if is_use_scenario:
+            context = "사용 시나리오 입니다. 그래서 화합물을 제공하지 않습니다."
+        else:
+            tokenized_query = req.question.split()
+            bm25_scores = self.help_bm25.get_scores(tokenized_query)
+            bm25_norm = normalize(bm25_scores)
+
+            query_emb = self.embeddings.embed_query(req.question)
+            query_emb = np.array([query_emb]).astype("float32")  # (1, dim) 형태로 변환
+
+            D, I = self.help_vectordb.index.search(query_emb, len(self.help_chat_documents))
+
+            faiss_sims = 1 / (1 + D[0])   # distance → similarity 변환
+            faiss_norm = normalize(faiss_sims)
+
+            dense = 0.5
+            bm = 0.5
+            hybrid_scores = dense * faiss_norm + bm * bm25_norm
+
+
+            # 상위 문서 선택
+            top_idx = hybrid_scores.argsort()[::-1][:1]
+            final_docs = [self.help_chat_documents[i] for i in top_idx]
+            context = "\n".join([d.page_content for d in final_docs])
+            print("context 호출:", context)
+
+        # --- LLM 호출 ---
         chain = help_chat_prompt | self.nano_llm
-        resp = await chain.ainvoke({
-            "material": req.select_material,
-            "question": req.question,
-            "context": context,
-            "scenario": req.scenario,
-        })
+        resp = await chain.ainvoke(
+            {
+                "material": req.select_material,
+                "question": req.question,
+                "context": context,
+                "scenario": req.scenario,
+                "hint_case":hint_case
+            }
+        )
         return resp.content
