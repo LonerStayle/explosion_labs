@@ -20,9 +20,9 @@ async def main():
     print("--- 1. combination_message 테스트 시작 ---")
     try:
         combination_request = CombinationReq(
-            material_a=ElementSymbols.HNO3,
-            material_b=ElementSymbols.HCL_CONC,
-            scenario=GameScenario.COMBINE_HNO33HCL,
+            material_a=ElementSymbols.KCN,
+            material_b=ElementSymbols.HCL,
+            scenario=GameScenario.COMBINE_KCL,
         )
         print(f"요청: {combination_request.model_dump()}")
 
