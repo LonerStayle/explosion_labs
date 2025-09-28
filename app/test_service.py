@@ -22,7 +22,7 @@ async def main():
         combination_request = CombinationReq(
             material_a=ElementSymbols.HNO3,
             material_b=ElementSymbols.HCL_CONC,
-            scenario=GameScenario.COMBINE_HNO3HCL,
+            scenario=GameScenario.COMBINE_HNO33HCL,
         )
         print(f"요청: {combination_request.model_dump()}")
 
@@ -35,14 +35,13 @@ async def main():
         print(f"combination_message 테스트 중 에러 발생: {e}")
     print("--- 1. combination_message 테스트 종료 ---\n")
 
-
     # --- 2. help_message 함수 테스트 ---
     print("--- 2. help_message 테스트 시작 ---")
     try:
         help_request = HelpChatReq(
             select_material=ElementSymbols.HNO3.value,
             question="왕수는 어떻게 만드나요?",
-            scenario=GameScenario.COMBINE_HNO3HCL.value,
+            scenario=GameScenario.COMBINE_HNO33HCL.value,
         )
         print(f"요청: {help_request.model_dump()}")
 
