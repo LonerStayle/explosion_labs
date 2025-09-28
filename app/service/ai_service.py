@@ -1,7 +1,6 @@
 import os
 import pickle
 import faiss
-
 from rank_bm25 import BM25Okapi
 import numpy as np
 from app.service.contract import is_chemical_question, compute_hint_case_advanced
@@ -16,15 +15,17 @@ from langchain.output_parsers import OutputFixingParser
 from app.dto.CombinationReq import CombinationReq
 from app.dto.HelpChatReq import HelpChatReq
 from app.service.parser import combination_parser
-from app.service.prompts import combination_prompt, help_chat_prompt
-from dotenv import load_dotenv
-load_dotenv()
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+from app.dto.CombinationRes import CombinationRes
+from app.service.prompts import (
+    combination_prompt,
+    help_chat_prompt,
+)
 
-# --- [디버깅 코드] API 키가 제대로 로드되었는지 확인합니다. ---
-# 스크립트 실행 시 터미널에 "OpenAI API Key Loaded: True" 라고 나와야 정상입니다.
-# 만약 "False"라고 나오면 .env 파일에 문제가 있는 것입니다.
-print(f"OpenAI API Key Loaded: {OPENAI_API_KEY is not None and OPENAI_API_KEY.startswith('sk-')}")
+from dotenv import load_dotenv
+from rank_bm25 import BM25Okapi
+import numpy as np
+
+load_dotenv()
 
 def normalize(scores):
     scores = np.array(scores, dtype=float)
@@ -60,14 +61,13 @@ class AiService:
                 help_chat_documents.append(d)
 
         help_chat_docstore = InMemoryDocstore({str(i): doc for i, doc in enumerate(help_chat_documents)})
-        
         self.help_vectordb = FAISS(
             embedding_function=self.embeddings,
             index=help_chat_index,
             docstore=help_chat_docstore,
             index_to_docstore_id={i: str(i) for i in range(len(help_chat_documents))},
         )
-
+        
         self.help_retriver = self.help_vectordb.as_retriever(search_kwargs={"k": 1})
         self.help_chat_documents = help_chat_documents
         tokenized_corpus = [doc.page_content.split() for doc in help_chat_documents]
@@ -98,11 +98,11 @@ class AiService:
 
         # --- 3. LLM (언어 모델) 및 파서(Parser) 설정 ---
         self.mini_llm = ChatOpenAI(
-            openai_api_key=OPENAI_API_KEY, model="gpt-4o-mini"
+             model="gpt-4o-mini"
         )
 
         self.nano_llm = ChatOpenAI(
-            openai_api_key=OPENAI_API_KEY, model="gpt-4.1-nano"
+             model="gpt-4.1-nano"
         )
 
         self.fixing_combi_parser = OutputFixingParser.from_llm(

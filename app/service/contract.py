@@ -42,7 +42,7 @@ SCENARIO_SOLUTIONS = {
         "second_alias": ["알칼리성 용액", "염기"],
     },
 
-    # 특수 소금을 자물쇠2에 사용 (오브젝트 힌트)
+    # 청산가리를를 자물쇠2에 사용 (오브젝트 힌트)
     "USE_KCN": {
         "first": None, "second": None, "order_required": False,
         "object_alias": ["자물쇠2", "홈", "표식", "문양", "패턴"],
