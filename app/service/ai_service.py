@@ -119,6 +119,7 @@ class AiService:
         else:
             context = str(docs[0].metadata)
         
+        print("문서 내용:",context)
         chain = combination_prompt | self.mini_llm | self.fixing_combi_parser
         resp = await chain.ainvoke({
             "material_a": req.material_a.value,
@@ -128,9 +129,10 @@ class AiService:
             "format_instructions": self.fixing_combi_parser.get_format_instructions(),
         })
 
-        if resp.result_1 == resp.scenario_answer:
+        if (resp.result_1 == resp.scenario_answer
+            or resp.result_2 == resp.scenario_answer):
             resp.result_state = "SUCCESS"
-        elif resp.result_1:
+        elif resp.result_1 or resp.result_2:
             resp.result_state = "BAD"
         else:
             resp.result_state = "NOTHING"

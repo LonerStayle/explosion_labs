@@ -22,7 +22,7 @@ service = AiService()
 
 @app.get("/health", tags=["헬스 체크"])
 def health_check():
-    return {"gggg":"ogggk"}
+    return {"health":"True"}
 
 @app.post("/combination", response_model=BaseRes[CombinationRes], tags=["게임 API"])
 async def combination_api(req: CombinationReq):
